@@ -1,6 +1,6 @@
 package com.docfinder.controller;
 
-import com.docfinder.entity.Doctor;
+import com.docfinder.dto.DoctorResponse;
 import com.docfinder.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +18,13 @@ public class DoctorController {
 
     // Get all doctors
     @GetMapping
-    public List<Doctor> getAllDoctors() {
+    public List<DoctorResponse> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
 
     // Search and filter doctors
     @GetMapping("/search")
-    public List<Doctor> searchDoctors(
+    public List<DoctorResponse> searchDoctors(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) Long specializationId,
