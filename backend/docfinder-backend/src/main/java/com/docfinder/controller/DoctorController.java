@@ -16,8 +16,30 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
+    // Get all doctors
     @GetMapping
     public List<Doctor> getAllDoctors() {
         return doctorService.getAllDoctors();
+    }
+
+    // Search and filter doctors
+    @GetMapping("/search")
+    public List<Doctor> searchDoctors(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) Long specializationId,
+            @RequestParam(required = false) Integer minimumExperience,
+            @RequestParam(required = false) Boolean verified,
+            @RequestParam(required = false) String qualification
+    ) {
+
+        return doctorService.searchDoctors(
+                name,
+                city,
+                specializationId,
+                minimumExperience,
+                verified,
+                qualification
+        );
     }
 }
