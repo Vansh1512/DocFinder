@@ -1,11 +1,12 @@
 package com.docfinder.service;
-
+import com.docfinder.entity.Review;
 import com.docfinder.dto.DoctorResponse;
 import com.docfinder.entity.Doctor;
 import com.docfinder.repository.DoctorRepository;
 import com.docfinder.specification.DoctorSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import com.docfinder.repository.ReviewRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,14 @@ import java.util.Optional;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final ReviewRepository reviewRepository;
 
-    public DoctorService(DoctorRepository doctorRepository) {
+    public DoctorService(
+            DoctorRepository doctorRepository,
+            ReviewRepository reviewRepository) {
+
         this.doctorRepository = doctorRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     // Get all doctors
@@ -81,7 +87,22 @@ public class DoctorService {
                 .map(this::convertToResponse)
                 .toList();
     }
+    private Double calculateAverageRating(Long doctorId) {
 
+        List<Review> reviews = reviewRepository.findByDoctorId(doctorId);
+
+        if (reviews.isEmpty()) {
+            return null;
+        }
+
+        double total = 0;
+
+        for (Review review : reviews) {
+            total += review.getRating();
+        }
+
+        return Math.round((total / reviews.size()) * 100.0) / 100.0;
+    }
     // Convert Doctor entity to safe DoctorResponse DTO
     private DoctorResponse convertToResponse(Doctor doctor) {
 
@@ -111,7 +132,7 @@ public class DoctorService {
                 doctor.getClinicAddress(),
                 doctor.getCity(),
                 doctor.getVerified(),
-                null
+                calculateAverageRating(doctor.getId())
         );
     }
 }
